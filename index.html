@@ -82,6 +82,7 @@ td:first-child,th:first-child { text-align:left; }
 .table-box thead { background:rgba(232,147,90,0.1); border-bottom:2px solid var(--rust); }
 .table-box th { padding:10px 12px; text-align:left; color:var(--rust); text-transform:none; font-size:0.82rem; letter-spacing:0; }
 .table-box td { padding:8px 12px; border-bottom:1px solid rgba(191,199,218,0.1); color:var(--ghost-warm); }
+.table-box td:nth-child(3), .table-box td:nth-child(4), .table-box td:nth-child(5) { text-align:center; }
 .table-box tbody tr:hover { background:rgba(232,147,90,0.06); }
 td.text-positive, .text-positive { color:var(--success) !important; font-weight:600; }
 td.text-negative, .text-negative { color:var(--error) !important; font-weight:600; }
@@ -449,43 +450,6 @@ The primary path (A&rarr;B&rarr;C&rarr;D) layers on incremental revenue streams 
 <td style="color:var(--success);font-weight:600">+$4,199,066</td>
 </tr>
 <tr class="divider"><td colspan="4"></td></tr>
-<tr class="metric-hdr"><td>LV (GC) Ending Cash</td><td></td><td></td><td></td></tr>
-<tr class="row-a"><td>Base Case</td>
-<td>$3,927,995</td>
-<td>$6,765,804</td>
-<td>$7,999,187</td>
-</tr>
-<tr class="row-b"><td>Base Case + Uplifters</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr class="row-c"><td>SN B + Klump/Scott</td>
-<td style="color:var(--success);font-weight:600">+$319,664</td>
-<td style="color:var(--success);font-weight:600">+$1,222,470</td>
-<td style="color:var(--success);font-weight:600">+$1,139,819</td>
-</tr>
-<tr class="row-d"><td>SN C + HVN (2 Projects)</td>
-<td style="color:var(--success);font-weight:600">+$319,664</td>
-<td style="color:var(--success);font-weight:600">+$1,508,274</td>
-<td style="color:var(--success);font-weight:600">+$3,604,564</td>
-</tr>
-<tr class="row-e"><td>SN B + HVN (2 Projects)</td>
-<td>—</td>
-<td style="color:var(--success);font-weight:600">+$285,804</td>
-<td style="color:var(--success);font-weight:600">+$2,464,745</td>
-</tr>
-<tr class="row-f"><td>Base + Klump/Scott</td>
-<td style="color:var(--success);font-weight:600">+$319,664</td>
-<td style="color:var(--success);font-weight:600">+$1,222,470</td>
-<td style="color:var(--success);font-weight:600">+$1,139,819</td>
-</tr>
-<tr class="row-g"><td>SN F + HVN (2 Projects)</td>
-<td style="color:var(--success);font-weight:600">+$319,664</td>
-<td style="color:var(--success);font-weight:600">+$1,508,274</td>
-<td style="color:var(--success);font-weight:600">+$3,604,564</td>
-</tr>
-<tr class="divider"><td colspan="4"></td></tr>
 </table>
 <p style="font-size:0.78rem;color:var(--ghost-warm);margin-top:0.5rem;line-height:1.5;">Note: Scenarios C, D, F, and G include $1.5M in Steyn preferred equity/loan for Klump &amp; Scott. The $1.5M is repaid with interest (15% cost of capital) from project cash flows — the pref equity is fully paid off with interest within the project timeline. Cash figures above reflect this repayment.</p>
 </div>
@@ -670,7 +634,7 @@ Scenario E (SN B + HVN) in <span style="color:var(--warning);font-weight:600">mo
 </div>
 <div class="table-box">
     <table>
-        <thead><tr><th>Project</th><th>GMP</th><th>Type</th><th>Start</th><th>End</th><th>Status / Notes</th></tr></thead>
+        <thead><tr><th style="text-align:left">Project</th><th style="text-align:right">GMP</th><th style="text-align:center">Type</th><th style="text-align:center">Start</th><th style="text-align:center">End</th><th style="text-align:right">Status / Notes</th></tr></thead>
         <tbody>
                         <tr>
                             <td><strong>Crenshaw</strong></td>
@@ -793,6 +757,7 @@ Scenario E (SN B + HVN) in <span style="color:var(--warning);font-weight:600">mo
                             <td class="text-warning">Pipeline — In D, E &amp; G</td>
                         </tr></tbody>
     </table>
+    <p style="font-size:0.72rem;color:var(--ghost-warm);opacity:0.6;margin-top:0.5rem;font-style:italic;">* Crenshaw, Nelrose, Ramsgate, Califa, and Whipple GMP values reflect remaining contract balances — these projects are currently under construction.</p>
 </div>
 </section>
 <section id="appendix">
