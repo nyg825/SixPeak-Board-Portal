@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Six Peak Capital — Board Portal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+:root {
+  --denim:#0B1833; --space:#2C3A51; --steel:#BFC7DA; --ghost:#F8F9F4;
+  --rust:#C4581A; --rust-glow:#E8935A; --rust-light:rgba(196,88,26,0.12);
+  --green:#717F4B; --success:#10B981; --warning:#F59E0B; --error:#EF4444;
+  --denim-light:#111E3D; --space-light:#384862; --space-muted:#1E2C44;
+  --steel-light:#E2E7F0; --ghost-warm:#FAFAF6; --rust-subtle:rgba(196,88,26,0.06);
+  --viz-rust:#C4581A; --viz-copper:#D4845A; --viz-amber:#E8A84C; --viz-sage:#7B9464;
+  --viz-teal:#4A8B8C; --viz-slate:#5E7B9B; --viz-steel:#8EA3BE; --viz-mist:#B8C7D8;
+  --gray:#94A3B8; --gray-dk:#475569; --white:#F8FAFC; --light-bg:#1a2541;
+  --border:rgba(191,199,218,0.12);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Aptos','DM Sans',Calibri,'Segoe UI',sans-serif; background:var(--steel-light); color:var(--denim); line-height:1.6; }
+.wrap { max-width:1200px; margin:0 auto; padding:2rem; }
+
+/* Header */
+header { background:linear-gradient(135deg, var(--space-light) 0%, var(--space-muted) 100%); border-bottom:3px solid var(--rust); padding:32px 28px; border-radius:8px 8px 0 0; box-shadow:0 4px 20px rgba(11,24,51,0.15); }
+.header-top { display:flex; align-items:center; gap:20px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid rgba(191,199,218,0.12); }
+.header-top img { height:60px; filter:invert(1); }
+.home-link { margin-left:auto; color:var(--ghost-warm); opacity:0.7; text-decoration:none; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.15em; font-weight:600; font-family:'DM Sans','Aptos',sans-serif; }
+.home-link:hover { opacity:1; color:var(--rust-glow); }
+.header-row { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+header h1 { font-size:24px; color:var(--rust); font-family:'DM Sans','Aptos',sans-serif; }
+header .sub { color:var(--ghost-warm); font-size:12px; text-transform:uppercase; letter-spacing:1px; opacity:0.85; }
+.meta { display:flex; gap:24px; font-size:12px; color:var(--ghost-warm); flex-wrap:wrap; opacity:0.85; }
+.meta strong { color:var(--ghost-warm); display:block; margin-bottom:2px; opacity:1; }
+
+/* Section nav (carousel tabs) */
+.section-nav { position:sticky; top:0; z-index:100; background:rgba(56,72,98,0.97); backdrop-filter:blur(8px); border-bottom:1px solid rgba(191,199,218,0.15); }
+.section-nav-inner { max-width:1200px; margin:0 auto; padding:0 1rem; display:flex; gap:4px; overflow-x:auto; }
+.section-nav button { background:none; border:none; cursor:pointer; color:var(--ghost-warm); opacity:0.55; font-family:inherit; font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; padding:12px 14px; white-space:nowrap; border-bottom:3px solid transparent; transition:all 0.15s ease; }
+.section-nav button:hover { opacity:0.9; }
+.section-nav button.active { opacity:1; color:var(--rust-glow); border-bottom-color:var(--rust); }
+
+/* Progress bar */
+.progress-wrap { background:rgba(0,0,0,0.15); padding:8px 2rem; display:flex; align-items:center; gap:14px; font-size:0.72rem; color:var(--ghost-warm); opacity:0.85; border-bottom:1px solid rgba(191,199,218,0.1); position:sticky; top:42px; z-index:99; }
+.progress-wrap .label { text-transform:uppercase; letter-spacing:0.1em; font-weight:600; }
+.progress-bar { flex:1; height:4px; background:rgba(191,199,218,0.15); border-radius:2px; overflow:hidden; }
+.progress-fill { height:100%; background:var(--rust); border-radius:2px; transition:width 0.25s ease; }
+.progress-counter { font-weight:700; letter-spacing:0.1em; min-width:52px; text-align:right; }
+
+/* Panels */
+.panels { position:relative; min-height:600px; }
+.panel { display:none; padding:1.5rem 0.25rem 0; }
+.panel.active { display:block; animation:fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* Section headings */
+h2.sec { font-size:1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.25em; color:var(--rust); margin:0 0 0.75rem; font-family:'Aptos','DM Sans',Calibri,sans-serif; }
+h2.sec::after { content:''; display:block; width:60px; height:2px; background:linear-gradient(90deg,var(--rust),transparent); margin-top:0.6rem; }
+h3 { font-size:1.2rem; font-weight:700; color:var(--rust); margin-bottom:0.75rem; }
+
+/* Cards & grid */
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin:0.75rem 0; }
+.grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin:0.75rem 0; }
+@media(max-width:900px) { .grid2,.grid3,[style*="grid-template-columns:1fr 1fr 1fr 1fr"] { grid-template-columns:1fr 1fr !important; } }
+.card { background:var(--space-light); border:1px solid rgba(191,199,218,0.15); border-radius:10px; padding:1.25rem; color:var(--ghost-warm); }
+.card:hover { border-color:rgba(232,147,90,0.4); box-shadow:0 12px 40px rgba(11,24,51,0.25); }
+
+/* KPI */
+.kpi { text-align:center; }
+.kpi .lbl { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--ghost-warm); margin-top:6px; opacity:0.7; }
+.kpi .val { font-size:1.7rem; font-weight:700; color:var(--ghost-warm); line-height:1.1; margin:4px 0; font-family:'DM Sans','Aptos',sans-serif; }
+.kpi .val.rust { color:var(--rust); }
+.kpi .val.green { color:var(--success); }
+.kpi .val.red { color:var(--error); }
+.kpi .val.sm { font-size:1.2rem; }
+.kpi .sub2 { font-size:0.78rem; color:var(--ghost-warm); font-weight:600; opacity:0.85; }
+
+/* Scenario comparison table */
+table { width:100%; border-collapse:collapse; font-size:0.85rem; margin:6px 0; }
+th,td { padding:5px 10px; text-align:right; border-bottom:1px solid rgba(191,199,218,0.1); color:var(--ghost-warm); }
+th { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:var(--rust); font-family:'DM Sans','Aptos',sans-serif; }
+td:first-child,th:first-child { text-align:left; }
+.metric-hdr td { font-weight:700; color:var(--rust); padding-top:12px; border-bottom:none; font-size:0.9rem; }
+.row-a td:first-child { padding-left:20px; color:var(--viz-steel); }
+.row-b td:first-child { padding-left:20px; color:var(--viz-rust); }
+.row-f td:first-child { padding-left:20px; color:var(--viz-slate); }
+.row-i td:first-child { padding-left:20px; color:var(--viz-sage); }
+.row-iu td:first-child { padding-left:20px; color:var(--viz-amber); }
+.divider td { height:1px; background:rgba(191,199,218,0.06); padding:0; border:none; }
+
+.table-box { background:var(--space-light); border:1px solid rgba(191,199,218,0.15); border-radius:10px; padding:1.25rem; margin:0.75rem 0; overflow-x:auto; color:var(--ghost-warm); }
+.table-box table { font-size:0.82rem; }
+.table-box thead { background:rgba(232,147,90,0.1); border-bottom:2px solid var(--rust); }
+.table-box th { padding:10px 12px; text-align:left; color:var(--rust); text-transform:none; font-size:0.82rem; letter-spacing:0; }
+.table-box td { padding:8px 12px; border-bottom:1px solid rgba(191,199,218,0.1); color:var(--ghost-warm); }
+.table-box td:nth-child(3), .table-box td:nth-child(4), .table-box td:nth-child(5) { text-align:center; }
+.table-box tbody tr:hover { background:rgba(232,147,90,0.06); }
+td.text-positive, .text-positive { color:var(--success) !important; font-weight:600; }
+td.text-negative, .text-negative { color:var(--error) !important; font-weight:600; }
+td.text-warning, .text-warning { color:var(--warning) !important; font-weight:600; }
+
+.chart-box { background:var(--space-light); border-radius:10px; padding:1rem 1.25rem; border:1px solid rgba(191,199,218,0.15); margin:0.75rem 0; }
+.chart-box h4 { font-size:0.73rem; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:var(--rust); margin-bottom:6px; font-family:'DM Sans','Aptos',sans-serif; }
+.chart-wrap { position:relative; height:280px; }
+canvas { width:100%!important; }
+
+.callout { background:var(--space-light); border-left:3px solid var(--rust); padding:0.9rem 1.1rem; margin:0.75rem 0; border-radius:0 8px 8px 0; font-size:0.85rem; color:var(--ghost-warm); line-height:1.7; }
+.callout strong { color:var(--rust); font-weight:700; }
+.callout.warn { border-left-color:var(--warning); }
+.callout.good { border-left-color:var(--success); }
+
+.badge { display:inline-block; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; padding:0.2rem 0.6rem; border-radius:4px; }
+.ba { background:rgba(191,199,218,0.12); color:var(--denim); }
+.bb { background:rgba(196,88,26,0.15); color:var(--rust); }
+.bf { background:rgba(94,123,155,0.15); color:var(--viz-slate); }
+
+/* Scenario Buttons */
+.scenario-grid { display:grid; gap:1rem; margin:0.75rem 0; }
+.scenario-grid.primary { grid-template-columns:repeat(3, 1fr); }
+.scenario-grid.extended { grid-template-columns:repeat(2, 1fr); }
+@media(max-width:900px) { .scenario-grid.primary, .scenario-grid.extended { grid-template-columns:1fr 1fr; } }
+.scenario-btn { background:var(--ghost-warm); border-radius:10px; padding:1.1rem 1.25rem; border:1px solid rgba(11,24,51,0.1); transition:all 0.2s ease; cursor:default; display:flex; flex-direction:column; justify-content:space-between; min-height:180px; }
+.scenario-btn:hover { border-color:var(--rust); box-shadow:0 6px 24px rgba(11,24,51,0.1); transform:translateY(-2px); }
+.scenario-btn .sc-name { font-family:'DM Sans','Aptos',sans-serif; font-size:0.95rem; font-weight:700; color:var(--denim); margin-bottom:6px; }
+.scenario-btn .sc-desc { font-family:'Aptos','DM Sans',Calibri,sans-serif; font-size:0.75rem; color:var(--space); line-height:1.5; flex:1; }
+.scenario-btn .sc-dl { display:inline-flex; align-items:center; gap:5px; margin-top:10px; padding:5px 10px; background:var(--steel-light); border-radius:5px; font-family:'DM Sans','Aptos',sans-serif; font-size:0.68rem; font-weight:600; color:var(--space); text-transform:uppercase; letter-spacing:0.08em; cursor:pointer; border:1px solid rgba(11,24,51,0.08); transition:all 0.15s ease; text-decoration:none; }
+.scenario-btn .sc-dl:hover { background:var(--rust); color:var(--ghost-warm); border-color:var(--rust); }
+.scenario-btn .sc-dl svg { width:13px; height:13px; }
+.scenario-btn .sc-accent { width:36px; height:3px; border-radius:2px; margin-bottom:10px; }
+
+.section-heading { font-family:'Aptos','DM Sans',Calibri,sans-serif; font-size:1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.25em; color:var(--rust); margin:1.5rem 0 0.75rem; }
+
+/* Arrow bar */
+.arrow-bar { display:flex; justify-content:space-between; align-items:center; padding:1.5rem 0.25rem 2.5rem; border-top:1px solid var(--border); margin-top:2rem; }
+.arrow-btn { background:var(--rust); color:var(--ghost-warm); border:none; cursor:pointer; padding:10px 18px; border-radius:8px; font-family:'DM Sans','Aptos',sans-serif; font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; display:flex; align-items:center; gap:8px; transition:all 0.2s ease; }
+.arrow-btn:hover:not(:disabled) { background:var(--rust-glow); transform:translateX(2px); }
+.arrow-btn.back:hover:not(:disabled) { transform:translateX(-2px); }
+.arrow-btn:disabled { opacity:0.3; cursor:not-allowed; }
+.arrow-btn svg { width:14px; height:14px; }
+.arrow-hint { font-size:0.7rem; opacity:0.6; text-align:center; flex:1; color:var(--space); }
+
+/* Collapsible appendix */
+details { margin:0.75rem 0; }
+details summary { cursor:pointer; font-size:0.95rem; font-weight:700; text-transform:uppercase; letter-spacing:0.2em; color:var(--rust); padding:0.5rem 0; font-family:'Aptos','DM Sans',Calibri,sans-serif; }
+details summary:hover { color:var(--rust-glow); }
+
+.footer { text-align:center; padding:1.5rem 0 1rem; border-top:1px solid rgba(56,72,98,0.3); color:var(--space); font-size:0.78rem; margin-top:2rem; }
+</style></head><body>
+<div class="wrap">
+
+<header>
+  <div class="header-top">
+    <img src="../images/six-peak-logo.webp" alt="Six Peak Capital">
+    <a class="home-link" href="../">&larr; Back to Landing</a>
+  </div>
+  <div class="header-row">
+    <div>
+      <div class="sub">Board Financial Overview &mdash; April 2026</div>
+    </div>
+    <div class="meta">
+      <div><strong>Model Period</strong>Apr 2026 – Mar 2033</div>
+      <div><strong>Active Projects</strong>11 Base Case (9 in 2026 / 9 in 2027)</div>
+      <div><strong>Version</strong>v21</div>
+    </div>
+  </div>
+</header>
+
+<nav class="section-nav"><div class="section-nav-inner" id="sectionNav"></div></nav>
+<div class="progress-wrap">
+  <span class="label">Section</span>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="progress-counter" id="progressCounter">1 / 7</span>
+</div>
+
+<div class="panels" id="panels">
+
+<!-- ============================================================ -->
+<!-- PANEL 1: Executive Summary                                    -->
+<!-- ============================================================ -->
+<section class="panel active" data-title="Executive Summary">
+<h2 class="sec">Executive Summary</h2>
+<div class="card" style="border-left:3px solid var(--rust);padding:1.5rem 1.75rem;">
+<p style="font-size:1.05rem;font-weight:700;color:var(--rust);margin-bottom:1rem;">
+A Strong Foundation — Building the Next Phase of Growth
+</p>
+<p style="font-size:0.88rem;line-height:1.75;margin-bottom:1rem;">
+Six Peak Capital enters Q2 FY2026 from a position of strength: 11 active construction projects generating <strong style="color:var(--success);">$6.4M</strong> in revenue and <strong style="color:var(--success);">$1.7M</strong> in consolidated net income. The GC engine is running, the pipeline is full, and the team is executing.</p>
+
+<p style="font-size:0.88rem;line-height:1.75;margin-bottom:1rem;">
+As a general contractor, project-to-project revenue transitions are a normal part of the business cycle. The current awarded portfolio naturally rolls off — <strong style="color:var(--rust);">5 of 11 projects complete before FY2028</strong> — which is expected and creates the runway to focus business development efforts on sourcing and winning new projects for 2028 and 2029 award. Under the Base Case, FY2027 still delivers <strong style="color:var(--success);">$2.3M</strong> in NI, with FY2028 reflecting the transition period at <strong style="color:var(--error);">$-5K</strong> before newly awarded work ramps up.</p>
+
+<p style="font-size:0.88rem;line-height:1.75;margin-bottom:1rem;">
+Under the current interest rate and tax credit environment, the Steyn cost of capital — and any equivalent alternative capital source — captures most of the initial distributions from any LIHTC project, not including construction revenue. Essentially the LIHTC strategy is just a conduit for GC revenue prior to 2033, and given that, it makes sense to invest more into being a GC without all the other problems of LIHTC development, at least until capital markets change materially.</p>
+
+<p style="font-size:1.05rem;font-weight:700;color:var(--rust);margin:1.25rem 0 1rem;">Sustainability Levers — Maintaining Revenue Through the Transition</p>
+<p style="font-size:0.88rem;line-height:1.75;margin-bottom:1rem;">
+The primary revenue engine is and will continue to be GC projects and non-LIHTC opportunities like Klump &amp; Scott and the Uplifters development fee program. This portal models <strong style="color:var(--rust);">5 plans</strong> across three levers that sustain the business through the project transition cycle. Each is independent and combinable:</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem;">
+<div style="background:rgba(196,88,26,0.18);border-radius:8px;padding:0.9rem 1rem;">
+    <p style="font-size:0.78rem;font-weight:700;color:var(--rust);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">1. Uplifters Foundation</p>
+    <p style="font-size:0.83rem;line-height:1.6;">60-property development fee program led by Schuyler Dietz. No capital required. 10% SP overhead ($150K/yr cap), tiered bonus (40/45/50%). Adds <strong style="color:var(--success);">$2.4M</strong> to 3-year NI. In Base Case + Uplifters and Base Case + Uplifters + Extended BD.</p>
+</div>
+<div style="background:rgba(113,127,75,0.18);border-radius:8px;padding:0.9rem 1rem;">
+    <p style="font-size:0.78rem;font-weight:700;color:#9AAF6B;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">2. Klump &amp; Scott</p>
+    <p style="font-size:0.83rem;line-height:1.6;">Two Steyn-guaranteed non-LIHTC developer deals. $1.5M pref equity from Steyn — 15% cost of capital passed to the deal. Adds <strong style="color:var(--success);">$1.8M</strong> to 3-year NI. In Base Case + Klump/Scott.</p>
+</div>
+<div style="background:rgba(232,168,76,0.18);border-radius:8px;padding:0.9rem 1rem;">
+    <p style="font-size:0.78rem;font-weight:700;color:var(--viz-amber);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">3. Extended BD Pipeline</p>
+    <p style="font-size:0.83rem;line-height:1.6;">30-deal third-party GC pipeline led by <strong>Tom Taggart with partner oversight from Chris Aiello and Bob Kennedy</strong>. $15–18M GMP each, bimonthly signings Oct 2026 – Apr 2032. Bonding revenue and costs assumed neutral, ~10.28% marginal NI. Generates <strong style="color:var(--success);">$32.1M</strong> cumulative NI through FY2033 when combined with Uplifters — a $49.1M swing vs. Base Case alone.</p>
+</div>
+</div>
+
+<p style="font-size:1.05rem;font-weight:700;color:var(--rust);margin:1.25rem 0 1rem;">The Path from Base to Peak</p>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1rem;text-align:center;">
+<div style="background:rgba(191,199,218,0.15);border-radius:6px;padding:0.75rem 0.5rem;">
+    <p style="font-size:0.68rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;">Base Case</p>
+    <p style="font-size:0.72rem;color:var(--rust);margin:4px 0 2px;">3-Year NI</p>
+    <p style="font-size:1.1rem;font-weight:700;color:var(--ghost-warm);">$4.0M</p>
+</div>
+<div style="background:rgba(191,199,218,0.15);border-radius:6px;padding:0.75rem 0.5rem;">
+    <p style="font-size:0.68rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;">+ Uplifters</p>
+    <p style="font-size:0.72rem;color:var(--rust);margin:4px 0 2px;">3-Year NI</p>
+    <p style="font-size:1.1rem;font-weight:700;color:var(--success);">$6.4M</p>
+</div>
+<div style="background:rgba(191,199,218,0.15);border-radius:6px;padding:0.75rem 0.5rem;">
+    <p style="font-size:0.68rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;">+ Klump/Scott</p>
+    <p style="font-size:0.72rem;color:var(--rust);margin:4px 0 2px;">3-Year NI</p>
+    <p style="font-size:1.1rem;font-weight:700;color:var(--success);">$5.8M</p>
+</div>
+<div style="background:rgba(212,168,67,0.2);border:1px solid rgba(212,168,67,0.3);border-radius:6px;padding:0.75rem 0.5rem;">
+    <p style="font-size:0.68rem;font-weight:700;color:var(--viz-amber);text-transform:uppercase;letter-spacing:0.1em;">+ Uplifters + Ext BD</p>
+    <p style="font-size:0.72rem;color:var(--rust);margin:4px 0 2px;">FY26–33 Cum NI</p>
+    <p style="font-size:1.1rem;font-weight:700;color:var(--success);">$32.1M</p>
+</div>
+</div>
+
+<p style="font-size:0.88rem;line-height:1.75;margin-bottom:1rem;">
+With all levers activated, the <strong style="color:var(--viz-amber);">Base Case + Uplifters + Extended BD</strong> plan generates <strong style="color:var(--success);">$32.1M</strong> cumulative NI through FY2033 — a <strong style="color:var(--rust);">$49.1M swing</strong> vs. the Base Case at <strong style="color:var(--error);">($17.0M)</strong>. The swing is driven by GC fee revenue on 30 third-party contracts (~$480M aggregate GMP) paired with the Uplifters development fee program, with bonding revenue and costs modeled as neutral in aggregate.
+</p>
+
+<p style="font-size:1.05rem;font-weight:700;color:var(--rust);margin:1.25rem 0 1rem;">Strategic Priorities</p>
+<p style="font-size:0.88rem;line-height:1.75;margin-bottom:0.5rem;">Three primary plans (Base Case, + Uplifters, + Klump/Scott) model the 2026–2028 transition. Two Extended BD plans model the full FY2026–2033 horizon with <strong>Tom Taggart's 30-deal pipeline, under partner oversight from Chris Aiello and Bob Kennedy</strong>. Near-term priorities:</p>
+
+<div style="margin-left:1rem;border-left:2px solid var(--border);padding-left:1rem;margin-bottom:0.25rem;">
+<p style="font-size:0.85rem;line-height:1.75;color:var(--ghost-warm);font-weight:400;">
+<strong style="color:var(--rust);">Business Development</strong> — the core priority. Source and win new GC projects for 2028–2029 award to sustain the construction pipeline long-term. Extended BD plans model a 30-deal, 6-year ramp under Tom Taggart with partner oversight from Chris Aiello and Bob Kennedy.<br>
+<strong style="color:var(--rust);">Uplifters</strong> — ready to activate with no capital outlay. 60 properties, 10% SP overhead ($150K/yr cap), tiered Schuyler bonus (40/45/50%). Led by Schuyler Dietz with leadership from Chris Aiello and Tom Taggart on the ground.<br>
+<strong style="color:var(--rust);">Klump &amp; Scott</strong> — two Steyn-guaranteed non-LIHTC developer deals. $1.5M pref equity from Steyn with 15% cost of capital passed to the deal. Generates $1.8M in 3-year NI. Pref equity is repaid with interest.<br>
+</p>
+</div>
+
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PANEL 2: Plans & Files                                        -->
+<!-- ============================================================ -->
+<section class="panel" data-title="Plans &amp; Files">
+<h2 class="sec">Primary Plans &amp; Extended BD</h2>
+<p style="font-size:0.85rem;color:var(--denim);margin-bottom:0.75rem;opacity:0.85;">Download the underlying Excel model for any plan. Primary plans cover the 2026–2028 transition; Extended BD plans extend the analysis through FY2033.</p>
+
+<div class="section-heading">Primary Plans</div>
+<div class="scenario-grid primary">
+    <div class="scenario-btn">
+        <div>
+            <div class="sc-accent" style="background:var(--viz-steel);"></div>
+            <div class="sc-name">Base Case (In-Place)</div>
+            <div class="sc-desc">11 awarded projects active. Scott &amp; Klump excluded (pending). 2 fewer site superintendents. No Uplifters.</div>
+        </div>
+        <a class="sc-dl" href="../models/SixPeak_BaseCase_v20.xlsx" download><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download .xlsx</a>
+    </div>
+    <div class="scenario-btn">
+        <div>
+            <div class="sc-accent" style="background:var(--rust);"></div>
+            <div class="sc-name">Base Case + Uplifters</div>
+            <div class="sc-desc">Base Case plus Uplifters Foundation development fee program. 60 properties, 10% SP overhead ($150K/yr cap), tiered bonus (40/45/50%).</div>
+        </div>
+        <a class="sc-dl" href="../models/SixPeak_Uplifters_v20.xlsx" download><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download .xlsx</a>
+    </div>
+    <div class="scenario-btn">
+        <div>
+            <div class="sc-accent" style="background:var(--viz-slate);"></div>
+            <div class="sc-name">Base Case + Klump/Scott</div>
+            <div class="sc-desc">Base Case plus Klump &amp; Scott. $1.5M Steyn pref equity (15% cost of capital). Full personnel plan. No Uplifters.</div>
+        </div>
+        <a class="sc-dl" href="../models/SixPeak_KlumpScott_v20.xlsx" download><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download .xlsx</a>
+    </div>
+</div>
+
+<div class="section-heading" style="margin-top:1.75rem;">Extended BD Plans (FY26–33 Horizon)</div>
+<div class="scenario-grid extended">
+    <div class="scenario-btn">
+        <div>
+            <div class="sc-accent" style="background:var(--viz-sage);"></div>
+            <div class="sc-name">Base Case + Extended BD</div>
+            <div class="sc-desc">Base Case plus <strong>Tom Taggart's 30-deal third-party GC pipeline, under partner oversight from Chris Aiello and Bob Kennedy</strong> ($480M aggregate GMP). Bimonthly signings Oct 2026 – Apr 2032. Bonding revenue and costs assumed neutral. No Uplifters.</div>
+        </div>
+        <a class="sc-dl" href="../models/SixPeak_ExtendedBD_v20.xlsx" download><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download .xlsx</a>
+    </div>
+    <div class="scenario-btn">
+        <div>
+            <div class="sc-accent" style="background:var(--viz-amber);"></div>
+            <div class="sc-name">Base Case + Uplifters + Extended BD</div>
+            <div class="sc-desc">Full growth plan. 30 BD deals (Tom Taggart, with partner oversight from Chris Aiello and Bob Kennedy) + Uplifters Foundation + staggered staffing (4 new hires FY28–30). <strong>$32.1M cumulative NI through FY2033.</strong></div>
+        </div>
+        <a class="sc-dl" href="../models/SixPeak_Uplifters_ExtendedBD_v20.xlsx" download><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download .xlsx</a>
+    </div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PANEL 3: 2026-2028 Comparison                                 -->
+<!-- ============================================================ -->
+<section class="panel" data-title="2026–2028 Comparison">
+<h2 class="sec">2026–2028 Primary Plan Comparison</h2>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin:0.75rem 0;">
+<div class="card kpi"><span class="badge ba">Base Case</span>
+        <div class="lbl">2026–28 Cumulative NI</div><div class="val green">$4.0M</div>
+        <div class="lbl">2028 Ending Cash</div><div class="val sm">$3.7M</div>
+        <div class="sub2" style="color:var(--warning)">Cash negative: Apr 2030</div>
+    </div>
+<div class="card kpi"><span class="badge bb">Base Case + Uplifters</span>
+        <div class="lbl">2026–28 Cumulative NI</div><div class="val green">$6.4M</div>
+        <div class="lbl">2028 Ending Cash</div><div class="val sm">$6.1M</div>
+        <div class="sub2" style="color:var(--warning)">Cash negative: Feb 2031</div>
+    </div>
+<div class="card kpi"><span class="badge bf">Base Case + Klump/Scott</span>
+        <div class="lbl">2026–28 Cumulative NI</div><div class="val green">$5.8M</div>
+        <div class="lbl">2028 Ending Cash</div><div class="val sm">$5.5M</div>
+        <div class="sub2" style="color:var(--warning)">Cash negative: Aug 2030</div>
+    </div>
+</div>
+<div class="card" style="margin-top:0.75rem"><table><tr><th style="min-width:200px"></th>
+<th>2026</th><th>2027</th><th>2028</th>
+</tr>
+<tr class="metric-hdr"><td>Consolidated Net Income</td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>$1,651,245</td><td>$2,346,206</td><td>($4,738)</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td style="color:var(--success);font-weight:600">+$418,597</td><td style="color:var(--success);font-weight:600">+$2,016,322</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--success);font-weight:600">+$510,427</td><td style="color:var(--success);font-weight:600">+$1,252,304</td><td style="color:var(--success);font-weight:600">+$59,424</td></tr>
+<tr class="divider"><td colspan="4"></td></tr>
+<tr class="metric-hdr"><td>Total Ending Cash</td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>$3,364,792</td><td>$3,965,029</td><td>$3,710,291</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td style="color:var(--success);font-weight:600">+$418,597</td><td style="color:var(--success);font-weight:600">+$2,434,919</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--success);font-weight:600">+$510,427</td><td style="color:var(--success);font-weight:600">+$1,762,731</td><td style="color:var(--success);font-weight:600">+$1,822,155</td></tr>
+<tr class="divider"><td colspan="4"></td></tr>
+</table>
+<p style="font-size:0.78rem;color:var(--ghost-warm);margin-top:0.5rem;line-height:1.5;">Note: Base Case + Klump/Scott includes $1.5M in Steyn preferred equity/loan. The $1.5M is repaid with interest (15% cost of capital) from project cash flows — the pref equity is fully paid off with interest within the project timeline. Cash figures above reflect this repayment.</p>
+</div>
+<div class="card" style="margin-top:0.75rem">
+<p style="font-size:0.9rem;margin-bottom:0.75rem;"><strong style="color:var(--rust);">Primary Plans — Incremental Consolidated Net Income</strong></p>
+<p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.5rem;">Each row shows the incremental NI added by that plan's new component vs. the Base Case.</p>
+<table>
+<tr><th style="min-width:220px">Plan</th><th>FY2026</th><th>FY2027</th><th>FY2028</th><th>3-Year Total</th><th style="min-width:150px">Component</th></tr>
+<tr class="row-a"><td>Base Case</td><td>$1,651,245</td><td>$2,346,206</td><td>($4,738)</td><td><strong>$3,992,714</strong></td><td>—</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>$—</td><td style="color:var(--success)">$418,597</td><td style="color:var(--success)">$2,016,322</td><td style="color:var(--success)"><strong>$2,434,919</strong></td><td style="font-size:0.78rem;color:var(--gray)">+ Uplifters</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--success)">$510,427</td><td style="color:var(--success)">$1,252,304</td><td style="color:var(--success)">$59,424</td><td style="color:var(--success)"><strong>$1,822,155</strong></td><td style="font-size:0.78rem;color:var(--gray)">+ Klump &amp; Scott</td></tr>
+</table></div>
+<div class="grid2">
+<div class="chart-box"><h4>Annual Net Income by Plan</h4><div class="chart-wrap"><canvas id="c1"></canvas></div></div>
+<div class="chart-box"><h4>Year-End Cash Position</h4><div class="chart-wrap"><canvas id="c2"></canvas></div></div>
+</div>
+<div class="grid2">
+<div class="chart-box"><h4>Monthly Cash — Primary Plans</h4><div class="chart-wrap"><canvas id="c3"></canvas></div></div>
+<div class="chart-box"><h4>Monthly Net Income — Primary Plans</h4><div class="chart-wrap"><canvas id="c4"></canvas></div></div>
+</div>
+<div class="callout">
+<strong>Key takeaway:</strong> All three primary plans are profitable through 2027.
+Base Case + Uplifters adds <strong>$2.4M</strong> to 2026–28 cumulative NI vs. Base Case.
+Base Case + Klump/Scott adds <strong>$1.8M</strong>.
+Cash turns negative in <span style="color:var(--warning);font-weight:600">month 49 (Apr 2030)</span> under Base Case vs. <span style="color:var(--warning);font-weight:600">month 59 (Feb 2031)</span> under Base Case + Uplifters.
+</div>
+<div class="callout warn">
+<strong>Klump &amp; Scott:</strong> Both are Steyn-guaranteed non-LIHTC developer deals requiring $1.5M of pref equity combined to proceed. The 15% cost of capital is passed to the deal. They are <em>not bonded</em>, so their inclusion has no bonding impact. Only the Base Case + Klump/Scott plan includes them. The $1.5M pref equity is repaid with interest from project cash flows. These deals add <strong>$1.8M</strong> in incremental 2026–28 NI.
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PANEL 4: Extended BD Outlook                                  -->
+<!-- ============================================================ -->
+<section class="panel" data-title="Extended BD">
+<h2 class="sec">Extended BD Plans — FY2026–2033 Outlook</h2>
+<p style="font-size:0.88rem;color:var(--denim);margin-bottom:1rem;line-height:1.7;">
+The Extended BD plans model <strong>Tom Taggart's 30-deal third-party GC pipeline — developed and executed under oversight from partners Chris Aiello (principal) and Bob Kennedy (legal &amp; deal closing)</strong> — over the full FY2026–2033 horizon. This is a fundamentally different time window than the 2026–2028 primary plan tables. Each deal: $15–18M GMP, bimonthly signings beginning Oct 2026, targeting LA multifamily 30–200 units, Type IIIA–V. <strong>Bonding revenue and bonding costs are modeled as neutral in aggregate</strong> — individual deals may carry bonding but the aggregate bonding P&amp;L nets to zero, preserving the ~10.28% marginal NI rate.
+</p>
+<div class="grid3">
+    <div class="card kpi">
+        <div class="lbl">Aggregate GMP</div><div class="val green">$480M</div>
+        <div class="sub2">30 deals over 6 years</div>
+    </div>
+    <div class="card kpi">
+        <div class="lbl">Cumulative NI (FY26–33)</div><div class="val green">$32.1M</div>
+        <div class="sub2">Base + Uplifters + Extended BD</div>
+    </div>
+    <div class="card kpi">
+        <div class="lbl">Swing vs. Base Case</div><div class="val green">+$49.1M</div>
+        <div class="sub2">vs. ($17.0M) cumulative Base Case</div>
+    </div>
+</div>
+<div class="card" style="margin-top:0.75rem">
+<p style="font-size:0.9rem;margin-bottom:0.75rem;"><strong style="color:var(--rust);">Consolidated Net Income by Fiscal Year — Base Case vs. Base + Uplifters + Extended BD</strong></p>
+<table>
+<tr><th></th><th>FY26</th><th>FY27</th><th>FY28</th><th>FY29</th><th>FY30</th><th>FY31</th><th>FY32</th><th>FY33</th><th>Cumulative</th></tr>
+<tr class="row-a"><td>Base Case</td><td>$1.65M</td><td>$2.35M</td><td>($0.00M)</td><td>($2.44M)</td><td>($4.54M)</td><td>($6.27M)</td><td>($6.17M)</td><td>($1.52M)</td><td><strong style="color:var(--error)">($17.0M)</strong></td></tr>
+<tr class="row-iu"><td>Base + Uplifters + Extended BD</td><td>$1.65M</td><td>$3.55M</td><td>$6.47M</td><td>$5.32M</td><td>$4.44M</td><td>$4.86M</td><td>$4.58M</td><td>$1.21M</td><td><strong style="color:var(--success)">$32.1M</strong></td></tr>
+<tr style="border-top:2px solid var(--border)"><td><strong>Delta</strong></td><td>—</td><td style="color:var(--success);font-weight:600">+$1.20M</td><td style="color:var(--success);font-weight:600">+$6.48M</td><td style="color:var(--success);font-weight:600">+$7.76M</td><td style="color:var(--success);font-weight:600">+$8.98M</td><td style="color:var(--success);font-weight:600">+$11.13M</td><td style="color:var(--success);font-weight:600">+$10.75M</td><td style="color:var(--success);font-weight:600">+$2.73M</td><td style="color:var(--success);font-weight:700">+$49.1M</td></tr>
+</table>
+<p style="font-size:0.78rem;color:var(--ghost-warm);margin-top:0.5rem;line-height:1.5;">FY2033 captures 9 months (Jul 2032 – Mar 2033) due to the model horizon. Base Case + Extended BD (without Uplifters) is available as a separate download — its trajectory sits between the two rows above.</p>
+</div>
+<div class="chart-box" style="margin-top:0.75rem"><h4>Annual Net Income — Base Case vs. Full Extended BD Plan (FY2026–2033)</h4><div class="chart-wrap" style="height:320px"><canvas id="c5"></canvas></div></div>
+<div class="card" style="margin-top:0.75rem">
+<p style="font-size:0.9rem;margin-bottom:0.75rem;"><strong style="color:var(--rust);">Extended BD Revenue Engines</strong></p>
+<table>
+<tr><th>Engine</th><th>Lead &amp; Oversight</th><th>Scope</th><th>Fee Revenue</th><th>Notes</th></tr>
+<tr><td><strong>BD Pipeline</strong></td><td>Tom Taggart<br><span style="font-size:0.72rem;opacity:0.8;">Oversight: Chris Aiello, Bob Kennedy</span></td><td>30 third-party GC contracts, $15–18M GMP each</td><td style="color:var(--success)">$27.7M → $96.7M annual billing</td><td>Bonding P&amp;L neutral in aggregate. ~10.28% marginal NI</td></tr>
+<tr><td><strong>Uplifters Foundation</strong></td><td>Schuyler Dietz</td><td>60 SFR properties over 5 yrs (Jan 2027–Dec 2031)</td><td style="color:var(--success)">$4.1M SP net dev fee revenue</td><td>Front-loaded FY2028–29. No GC execution risk</td></tr>
+<tr><td><strong>Developer Portfolio</strong></td><td>Derek Sanders</td><td>Ramsgate, Francis, Reseda, 3rd Street</td><td style="color:var(--success)">LIHTC + developer fees</td><td>Existing commitments; Francis &amp; Reseda add $1.2M SP LIHTC from FY2030</td></tr>
+</table>
+</div>
+<div class="callout good">
+<strong>Partner oversight of BD:</strong> All deal sourcing, qualification, and closing by <strong>Tom Taggart</strong> is overseen by <strong>Chris Aiello</strong> (principal) and <strong>Bob Kennedy</strong> (legal &amp; deal closing). Chris co-sources the top 30% of pipeline by GMP — principal-level developer relationships. Bob gates all contract execution; target under 45 days from term sheet to executed contract.
+</div>
+<div class="callout good">
+<strong>Staffing plan:</strong> Four new hires are staggered to match the pipeline ramp — no hire before the workload justifies it. Senior Supt 1 (Jan 2028), APM 3 (Jul 2028), Senior Supt 2 (Jan 2029), APM 4 (Jan 2030). Total incremental annual payroll at full run-rate: <strong>$590K</strong>. Peak concurrent projects: <strong>11 in FY2031–32</strong>. All hires and their cost are already reflected in the $32.1M cumulative NI figure.
+</div>
+<div class="callout">
+<strong>Tom Taggart compensation</strong> (with partner-approved structure): Converts from Asset Manager ($222K) to Director of BD effective May 2026, 100% allocated to LV Construction. Three phases: salary-only pipeline build (May 2026 – Jan 2027), bonus-eligible at 0.20% of signed GMP from Feb 2027, full structure from Feb 2028 with $150K annual bonus cap. Total bonus over 30 deals: <strong>$750K</strong> (capped from $870K uncapped). Chris Aiello and Bob Kennedy approve each deal for bonus eligibility.
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PANEL 5: Uplifters                                            -->
+<!-- ============================================================ -->
+<section class="panel" data-title="Uplifters">
+<h2 class="sec">Uplifters Foundation — Development Fee Program</h2>
+<p style="font-size:0.88rem;color:var(--denim);margin-bottom:1rem;line-height:1.7;">
+Six Peak has the opportunity to run the <strong style="color:var(--denim);">Uplifters Foundation</strong> development program — 60 single-family residential properties generating fee revenue from acquisition, development management, leasing, and exit fees over a 5-year period (Jan 2027 – Dec 2031). Six Peak would <strong style="color:var(--denim);">not</strong> do the construction.
+</p>
+<div class="grid3">
+    <div class="card kpi">
+        <div class="lbl">Total Fee Revenue</div><div class="val green">$9.0M</div>
+        <div class="sub2">60 properties over 5 years</div>
+    </div>
+    <div class="card kpi">
+        <div class="lbl">Total to Six Peak</div><div class="val green">$4.1M</div>
+        <div class="sub2">After 10% OH ($150K/yr cap) + tiered bonus (40/45/50%)</div>
+    </div>
+    <div class="card kpi">
+        <div class="lbl">Cash Runway Extension</div><div class="val green">+10 months</div>
+        <div class="sub2">vs Base Case (Month 49 &rarr; 59)</div>
+    </div>
+</div>
+<div class="callout good">
+<strong>Program Leadership:</strong> <strong>Schuyler Dietz</strong> leads the program with leadership from <strong>Chris Aiello</strong>. <strong>Derek Sanders</strong> advises on the project management employees. <strong>Chris Andresen</strong> manages accounting and back office processes with <strong>Robert Carrega</strong>. <strong>Tom Taggart</strong> assists in acquisitions and is an available on-the-ground resource on a daily basis for the strategy. Six Peak earns a <strong>10% overhead fee (capped at $150K/yr)</strong> on all fee revenue. After overhead, staffing, and other opex, Schuyler receives a <strong>tiered bonus: 40% on first 20 deals, 45% on next 20, 50% on final 20</strong>.
+</div>
+<div class="callout warn">
+<strong>Negotiation Note:</strong> Schuyler initially proposed a 50/50 deal. Our target is to settle at the <strong>10% overhead fee</strong> to Six Peak, then a <strong>60/40 split</strong> of net income (60% to Schuyler, 40% to Six Peak). The model currently reflects 10% OH (capped at $150K/yr) + tiered Schuyler bonus (40/45/50%) as the working baseline.
+</div>
+<div class="card" style="margin-top:0.75rem">
+<p style="font-size:0.85rem;margin-bottom:0.5rem;"><strong style="color:var(--rust);">Uplifters P&amp;L Summary (SixPeak FY)</strong></p>
+<table>
+<tr><th></th><th>2027</th><th>2028</th><th>2029</th><th>2030</th><th>2031</th><th>Total</th></tr>
+<tr><td>Fee Revenue</td><td>$1,084,382</td><td>$3,698,017</td><td>$2,427,299</td><td>$1,369,332</td><td>$430,635</td><td><strong>$9,009,665</strong></td></tr>
+<tr><td>Staffing</td><td>($202,088)</td><td>($397,927)</td><td>($450,012)</td><td>($450,012)</td><td>$—</td><td><strong>($1,500,039)</strong></td></tr>
+<tr><td>Other OpEx</td><td>($114,000)</td><td>($114,000)</td><td>($114,000)</td><td>($114,000)</td><td>$—</td><td><strong>($456,000)</strong></td></tr>
+<tr><td>SP Overhead (10%, $150K cap)</td><td>($93,582)</td><td>($150,000)</td><td>($148,450)</td><td>($136,933)</td><td>($34,227)</td><td><strong>($563,193)</strong></td></tr>
+<tr style="font-weight:700"><td>Net Before Bonus</td><td>$674,712</td><td>$3,036,090</td><td>$1,714,837</td><td>$668,387</td><td>$396,407</td><td><strong>$6,490,433</strong></td></tr>
+<tr><td style="color:var(--rust)">Schuyler Bonus (40/45/50%)</td><td>($269,885)</td><td>($1,335,773)</td><td>($813,611)</td><td>($334,194)</td><td>($198,204)</td><td><strong>($2,951,666)</strong></td></tr>
+<tr style="font-weight:700;color:var(--success)"><td>Total to Six Peak</td><td>$498,409</td><td>$1,850,318</td><td>$1,049,676</td><td>$471,127</td><td>$232,431</td><td><strong>$4,101,960</strong></td></tr>
+</table></div>
+<div class="card" style="margin-top:0.75rem">
+<p style="font-size:0.85rem;margin-bottom:0.5rem;"><strong style="color:var(--rust);">Staffing Detail</strong></p>
+<table>
+<tr><th>Role</th><th>Annual Comp</th><th>Start</th><th>End</th><th>Duration</th></tr>
+<tr><td>Project Manager 1</td><td>$125,000</td><td>Feb 2027 (Mo 11)</td><td>Sep 2030 (Mo 57)</td><td>47 months</td></tr>
+<tr><td>Project Coordinator</td><td>$90,000</td><td>May 2027 (Mo 14)</td><td>Sep 2030 (Mo 57)</td><td>44 months</td></tr>
+<tr><td>Accountant</td><td>$110,000</td><td>Oct 2027 (Mo 19)</td><td>Sep 2030 (Mo 57)</td><td>39 months</td></tr>
+<tr><td>Project Manager 2</td><td>$125,000</td><td>Jun 2028 (Mo 27)</td><td>Sep 2030 (Mo 57)</td><td>31 months</td></tr>
+<tr style="font-weight:700;border-top:2px solid var(--border)"><td>Total Staffing</td><td colspan="3"></td><td>($1,500,039)</td></tr>
+</table>
+<p style="font-size:0.78rem;margin-top:0.5rem;color:var(--ghost-warm);opacity:0.7;">Other OpEx: Acctg/Audit/Tax $40K/yr · Insurance $20K/yr · Office $2,500/mo · Computer/Internet $24K/yr = $456K total. Legal ($25K/project) is a deal cost, not in P&amp;L.</p>
+</div>
+<div class="callout">
+<strong>Impact on FY2028:</strong> Base Case + Uplifters adds <strong style="color:var(--success);">$2.0M</strong> to consolidated NI in 2028, turning the base case loss of <strong style="color:var(--error);">$-5K</strong> into <strong style="color:var(--success);">$2.0M</strong>.
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PANEL 6: Project Status                                       -->
+<!-- ============================================================ -->
+<section class="panel" data-title="Project Status">
+<h2 class="sec">Current Project Status</h2>
+<div class="callout">
+<strong>Acama</strong>, <strong>Lexington</strong>, and <strong>Denny</strong> are awarded (3rd-party GC). <strong>Klump</strong> and <strong>Scott</strong> are pending — included in Base Case + Klump/Scott.
+</div>
+<div class="table-box">
+    <table>
+        <thead><tr><th style="text-align:left">Project</th><th style="text-align:right">GMP</th><th style="text-align:center">Type</th><th style="text-align:center">Start</th><th style="text-align:center">End</th><th style="text-align:right">Status / Notes</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Crenshaw</strong></td><td>$5,321,971</td><td>GC + Dev</td><td>Apr 2026</td><td>Nov 2026</td><td class="text-warning">Ends before FY28</td></tr>
+            <tr><td><strong>Ramsgate</strong></td><td>$19,982,132</td><td>GC + Dev</td><td>Apr 2026</td><td>Jul 2027</td><td class="text-warning">Ends before FY28</td></tr>
+            <tr><td><strong>Califa</strong></td><td>$11,673,185</td><td>3rd Party GC</td><td>Apr 2026</td><td>Jun 2027</td><td class="text-warning">Ends before FY28</td></tr>
+            <tr><td><strong>Whipple</strong></td><td>$13,492,534</td><td>3rd Party GC</td><td>Apr 2026</td><td>Jun 2027</td><td class="text-warning">Ends before FY28</td></tr>
+            <tr><td><strong>Nelrose</strong></td><td>$4,052,747</td><td>3rd Party GC</td><td>Apr 2026</td><td>Oct 2027</td><td class="text-warning">Ends before FY28</td></tr>
+            <tr><td><strong>Francis</strong></td><td>$42,968,448</td><td>GC + Dev</td><td>Jul 2026</td><td>Dec 2028</td><td class="text-positive">Active in FY28</td></tr>
+            <tr><td><strong>Lexington</strong></td><td>$13,625,772</td><td>3rd Party GC</td><td>Oct 2026</td><td>Apr 2028</td><td class="text-positive">Awarded</td></tr>
+            <tr><td><strong>Denny</strong></td><td>$15,844,883</td><td>3rd Party GC</td><td>Oct 2026</td><td>Mar 2029</td><td class="text-positive">Awarded</td></tr>
+            <tr><td><strong>Acama</strong></td><td>$21,263,405</td><td>3rd Party GC</td><td>Nov 2026</td><td>Oct 2028</td><td class="text-positive">Awarded</td></tr>
+            <tr style="opacity:0.5"><td><strong>Klump</strong></td><td>$9,577,109</td><td>GC + Dev</td><td>Aug 2026</td><td>Feb 2028</td><td class="text-warning">Pending — In Base + Klump/Scott</td></tr>
+            <tr style="opacity:0.5"><td><strong>Scott</strong></td><td>$7,545,203</td><td>GC + Dev</td><td>Sep 2026</td><td>Mar 2028</td><td class="text-warning">Pending — In Base + Klump/Scott</td></tr>
+            <tr><td><strong>Reseda</strong></td><td>$45,266,770</td><td>GC + Dev</td><td>Apr 2027</td><td>Sep 2029</td><td class="text-positive">Active in FY28</td></tr>
+            <tr><td><strong>3rd St</strong></td><td>$41,354,632</td><td>GC + Dev</td><td>Jun 2028</td><td>Nov 2030</td><td class="text-positive">Active in FY28</td></tr>
+        </tbody>
+    </table>
+    <p style="font-size:0.72rem;color:var(--ghost-warm);opacity:0.6;margin-top:0.5rem;font-style:italic;">* Crenshaw, Nelrose, Ramsgate, Califa, and Whipple GMP values reflect remaining contract balances — these projects are currently under construction. Extended BD plans additionally model 30 third-party GC contracts signed bimonthly from Oct 2026 under Tom Taggart with partner oversight from Chris Aiello and Bob Kennedy — see Extended BD section.</p>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PANEL 7: Appendix                                             -->
+<!-- ============================================================ -->
+<section class="panel" data-title="Appendix">
+<h2 class="sec">Appendix — Supporting Detail</h2>
+<details><summary>Revenue &amp; Cost Drivers (Primary Plans)</summary>
+<div class="card" style="margin-top:0.5rem">
+<table><tr><th style="min-width:200px"></th><th>2026</th><th>2027</th><th>2028</th><th>2029</th></tr>
+<tr class="metric-hdr"><td>Total GC Revenue</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>$6,444,356</td><td>$9,642,961</td><td>$7,340,505</td><td>$3,825,011</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--success);font-weight:600">+$392,046</td><td style="color:var(--success);font-weight:600">+$1,259,962</td><td style="color:var(--success);font-weight:600">+$293,709</td><td>—</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+<tr class="metric-hdr"><td>GC Personnel</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>($2,218,919)</td><td>($3,086,892)</td><td>($3,086,892)</td><td>($3,086,892)</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--error);font-weight:600">($114,583)</td><td style="color:var(--error);font-weight:600">($250,000)</td><td style="color:var(--error);font-weight:600">($250,000)</td><td style="color:var(--error);font-weight:600">($250,000)</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+<tr class="metric-hdr"><td>Total GC Costs</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>($4,068,227)</td><td>($6,143,885)</td><td>($6,048,457)</td><td>($4,736,782)</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--error);font-weight:600">($133,490)</td><td style="color:var(--error);font-weight:600">($291,869)</td><td style="color:var(--error);font-weight:600">($292,706)</td><td style="color:var(--error);font-weight:600">($293,560)</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+<tr class="metric-hdr"><td>GC Net Income</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>$2,376,129</td><td>$3,499,076</td><td>$1,292,047</td><td>($911,771)</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--success);font-weight:600">+$258,556</td><td style="color:var(--success);font-weight:600">+$968,094</td><td style="color:var(--success);font-weight:600">+$1,003</td><td style="color:var(--error);font-weight:600">($293,560)</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+<tr class="metric-hdr"><td>Six Peak Revenue</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>$370,448</td><td>$314,812</td><td>$200,250</td><td>$163,365</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td style="color:var(--success);font-weight:600">+$418,597</td><td style="color:var(--success);font-weight:600">+$2,016,322</td><td style="color:var(--success);font-weight:600">+$1,203,062</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--success);font-weight:600">+$543,093</td><td style="color:var(--success);font-weight:600">+$284,211</td><td style="color:var(--success);font-weight:600">+$58,421</td><td>—</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+<tr class="metric-hdr"><td>Six Peak Expenses</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>($1,095,331)</td><td>($1,467,682)</td><td>($1,497,035)</td><td>($1,690,341)</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--error);font-weight:600">($291,223)</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+<tr class="metric-hdr"><td>Six Peak Net Income</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>($724,883)</td><td>($1,152,869)</td><td>($1,296,785)</td><td>($1,526,976)</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td style="color:var(--success);font-weight:600">+$418,597</td><td style="color:var(--success);font-weight:600">+$2,016,322</td><td style="color:var(--success);font-weight:600">+$1,203,062</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--success);font-weight:600">+$251,870</td><td style="color:var(--success);font-weight:600">+$284,211</td><td style="color:var(--success);font-weight:600">+$58,421</td><td>—</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+</table>
+<p style="font-size:0.78rem;color:var(--ghost-warm);opacity:0.7;margin-top:0.5rem;">Extended BD plans are modeled on a different horizon (FY2026–2033) — see the Extended BD panel.</p>
+</div></details>
+<details><summary>Bonding Comparison (Primary Plans)</summary>
+<div class="card" style="margin-top:0.5rem">
+<table><tr><th style="min-width:200px"></th><th>2026</th><th>2027</th><th>2028</th><th>2029</th></tr>
+<tr class="metric-hdr"><td>Bonding Revenue</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>$1,405,538</td><td>$679,002</td><td>$620,319</td><td>$—</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+<tr class="metric-hdr"><td>Bonding Costs</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>($693,399)</td><td>($1,471,170)</td><td>($1,344,026)</td><td>$—</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+<tr class="metric-hdr"><td>Bonding Outstanding</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>$89,880,219</td><td>$56,473,336</td><td>$46,152,167</td><td>$13,258,585</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+</table>
+<p style="font-size:0.8rem;color:var(--gray);margin-top:8px;">Klump and Scott are not bonded — adding them has zero bonding impact. All primary plans have identical bonding profiles. Extended BD plans assume bonding revenue and bonding costs are neutral in aggregate — individual deals may be bonded, but aggregate bonding P&amp;L nets to zero.</p>
+</div></details>
+<details><summary>Steyn Group Fees, PIK &amp; Debt Facility</summary>
+<div class="table-box" style="margin-top:0.5rem">
+    <table>
+        <thead><tr><th>Fee Category</th><th>2026</th><th>2027</th><th>2028</th><th>3-Year Total</th></tr></thead>
+        <tbody>
+            <tr><td><strong>PIK Outstanding</strong></td><td>$2,378,400</td><td>$1,714,451</td><td>$1,035,129</td><td>—</td></tr>
+        </tbody>
+    </table>
+    <p style="font-size:0.8rem;color:var(--gray);margin-top:8px;">PIK accrues at 15% annually. LIHTC fees begin 2029+ as deal cash flows mature.</p>
+</div>
+<div class="card" style="margin-top:0.5rem">
+<p style="font-size:0.85rem;margin-bottom:0.75rem;"><strong style="color:var(--rust);">PIK Preferred Equity — Reseda</strong></p>
+<table>
+<tr><th>Event</th><th>Amount</th><th>Date</th><th>Notes</th></tr>
+<tr><td>Capital Invested</td><td>$1,450,000</td><td>Pre-model (Apr 2026)</td><td>Full amount deployed</td></tr>
+<tr><td>Deal Distribution</td><td style="color:var(--error)">($1,450,000)</td><td>Apr 2027 (Mo 13)</td><td>Returned at Reseda start</td></tr>
+<tr><td><strong>PIK Fully Paid Off</strong></td><td>$—</td><td><strong style="color:var(--success)">Apr 2030 (Mo 50)</strong></td><td>From LIHTC revenue after Steyn fees</td></tr>
+<tr style="border-top:2px solid var(--border)"><td><strong>Total Interest Earned (Steyn)</strong></td><td><strong style="color:var(--rust)">$362,885</strong></td><td>Over 50 months</td><td>15% annual accrual on balance</td></tr>
+<tr><td><strong>Total Returned to Steyn</strong></td><td><strong style="color:var(--rust)">$1,812,885</strong></td><td>By Apr 2030</td><td>1.25x return on capital</td></tr>
+</table>
+</div>
+<div class="card" style="margin-top:0.5rem">
+<p style="font-size:0.85rem;margin-bottom:0.75rem;"><strong style="color:var(--rust);">Debt Facility Balances</strong></p>
+<table>
+<tr><th></th><th>2026</th><th>2027</th><th>2028</th></tr>
+<tr><td>PE Debt Facility</td><td>$1,404,378</td><td>$—</td><td>$—</td></tr>
+<tr><td>Row Run Capital</td><td>$1,000,000</td><td>$750,000</td><td>$500,000</td></tr>
+</table>
+</div>
+</details>
+<details><summary>NI &amp; Cash Through 2029 (Primary Plans)</summary>
+<div class="card" style="margin-top:0.5rem">
+<table><tr><th style="min-width:200px"></th><th>2026</th><th>2027</th><th>2028</th><th>2029</th></tr>
+<tr class="metric-hdr"><td>Consolidated Net Income</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>$1,651,245</td><td>$2,346,206</td><td>($4,738)</td><td>($2,438,747)</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td style="color:var(--success);font-weight:600">+$418,597</td><td style="color:var(--success);font-weight:600">+$2,016,322</td><td style="color:var(--success);font-weight:600">+$1,203,062</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--success);font-weight:600">+$510,427</td><td style="color:var(--success);font-weight:600">+$1,252,304</td><td style="color:var(--success);font-weight:600">+$59,424</td><td style="color:var(--error);font-weight:600">($293,560)</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+<tr class="metric-hdr"><td>Total Ending Cash</td><td></td><td></td><td></td><td></td></tr>
+<tr class="row-a"><td>Base Case</td><td>$3,364,792</td><td>$3,965,029</td><td>$3,710,291</td><td>$1,271,544</td></tr>
+<tr class="row-b"><td>Base Case + Uplifters</td><td>—</td><td style="color:var(--success);font-weight:600">+$418,597</td><td style="color:var(--success);font-weight:600">+$2,434,919</td><td style="color:var(--success);font-weight:600">+$3,387,980</td></tr>
+<tr class="row-f"><td>Base Case + Klump/Scott</td><td style="color:var(--success);font-weight:600">+$510,427</td><td style="color:var(--success);font-weight:600">+$1,762,731</td><td style="color:var(--success);font-weight:600">+$1,822,155</td><td style="color:var(--success);font-weight:600">+$1,528,594</td></tr>
+<tr class="divider"><td colspan="5"></td></tr>
+</table>
+</div></details>
+<details><summary>Tier 2 Bonding Sensitivity (1.50% vs 3.25%)</summary>
+<div class="card" style="margin-top:0.5rem">
+<p style="font-size:0.85rem;margin-bottom:0.75rem;">Bonding costs are <strong style="color:var(--rust);">one-time</strong> at project start (GMP × rate). Reseda fires in 2027, 3rd St in 2028. Reducing Tier 2 from 3.25% to 1.50% saves <strong style="color:var(--success);">$1.5M</strong> total.</p>
+<table>
+<tr><th>Project</th><th>GMP</th><th>Current (3.25%)</th><th>At 1.50%</th><th>Savings</th><th>Fires In</th></tr>
+<tr><td>Reseda</td><td>$45,266,770</td><td>($1,471,170)</td><td>($679,002)</td><td class="text-positive">$792,168</td><td>2027 (Mo 13)</td></tr>
+<tr><td>3rd St</td><td>$41,354,632</td><td>($1,344,026)</td><td>($620,319)</td><td class="text-positive">$723,707</td><td>2028 (Mo 27)</td></tr>
+<tr style="font-weight:700"><td>TOTAL</td><td>$86,621,402</td><td>($2,815,196)</td><td>($1,299,321)</td><td class="text-positive">$1,515,875</td><td></td></tr>
+</table></div>
+</details>
+<details><summary>Bonding Liquidity — 2.5% Requirement vs Cash</summary>
+<div class="card" style="margin-top:0.5rem">
+<p style="font-size:0.85rem;margin-bottom:0.75rem;">Assuming 2.5% of bonding outstanding must be held as liquid reserves, with tax distributions at 30% of consolidated NI:</p>
+<table>
+<tr><th></th><th>2026</th><th>2027</th><th>2028</th><th>2029</th></tr>
+<tr><td>Bonding Outstanding</td><td>$89,880,219</td><td>$56,473,336</td><td>$46,152,167</td><td>$13,258,585</td></tr>
+<tr><td>2.5% Liquidity Req.</td><td>$2,247,005</td><td>$1,411,833</td><td>$1,153,804</td><td>$331,465</td></tr>
+<tr style="border-top:2px solid var(--border)"><td>Ending Cash (Base Case)</td><td>$3,364,792</td><td>$3,965,029</td><td>$3,710,291</td><td>$1,271,544</td></tr>
+<tr><td>Tax Distribution (30% Consol NI)</td><td>$—</td><td>($495,374)</td><td>($703,862)</td><td>$—</td></tr>
+<tr><td>Cash After Tax Dist.</td><td>$3,364,792</td><td>$3,469,656</td><td>$3,006,430</td><td>$1,271,544</td></tr>
+<tr style="font-weight:700"><td>Surplus / (Shortfall)</td><td class="text-positive">$1,117,787</td><td class="text-positive">$2,057,822</td><td class="text-positive">$1,852,625</td><td class="text-positive">$940,080</td></tr>
+</table>
+<p style="font-size:0.8rem;color:var(--gray);margin-top:8px;">2026 and 2027 show adequate liquidity.</p>
+</div>
+</details>
+</section>
+
+</div>
+
+<div class="arrow-bar">
+  <button class="arrow-btn back" id="backBtn" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Back
+  </button>
+  <div class="arrow-hint">Use arrows or top nav to navigate sections. Keyboard: ← →</div>
+  <button class="arrow-btn" id="nextBtn">
+    Next
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+</div>
+
+<div class="footer">Six Peak Capital &middot; LV Construction &middot; Confidential Board Materials &middot; Generated April 2026 &middot; Model v21</div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  Chart.defaults.color="#FAFAF6";
+  Chart.defaults.borderColor="rgba(250,250,246,0.1)";
+  Chart.defaults.font.family="'Aptos','DM Sans',Calibri,'Segoe UI',sans-serif";
+
+  // Carousel state
+  const panels = [...document.querySelectorAll('.panel')];
+  const navEl = document.getElementById('sectionNav');
+  const progressFill = document.getElementById('progressFill');
+  const progressCounter = document.getElementById('progressCounter');
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  // Build top nav from panel data-title
+  panels.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.innerHTML = p.dataset.title;
+    btn.dataset.idx = i;
+    btn.addEventListener('click', () => show(i));
+    navEl.appendChild(btn);
+  });
+
+  let current = 0;
+  const chartsBuilt = {};
+
+  function show(idx) {
+    if (idx < 0 || idx >= panels.length) return;
+    current = idx;
+    panels.forEach((p, i) => p.classList.toggle('active', i === idx));
+    [...navEl.children].forEach((b, i) => b.classList.toggle('active', i === idx));
+    progressFill.style.width = ((idx + 1) / panels.length * 100) + '%';
+    progressCounter.textContent = (idx + 1) + ' / ' + panels.length;
+    backBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === panels.length - 1;
+    buildChartsFor(idx);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function buildChartsFor(idx) {
+    const title = panels[idx].dataset.title;
+    if (title.includes('2026') && !chartsBuilt.primary) { buildPrimaryCharts(); chartsBuilt.primary = true; }
+    if (title.includes('Extended') && !chartsBuilt.extended) { buildExtendedChart(); chartsBuilt.extended = true; }
+  }
+
+  function buildPrimaryCharts() {
+    new Chart(document.getElementById("c1"),{type:"bar",data:{labels:['2026','2027','2028','2029'],datasets:[
+      {label:"Base Case",data:[1651245, 2346206, -4738, -2438747],backgroundColor:"#8EA3BE90",borderColor:"#8EA3BE",borderWidth:1},
+      {label:"Base + Uplifters",data:[1651245, 2764803, 2011584, -1235685],backgroundColor:"#C4581A90",borderColor:"#C4581A",borderWidth:1},
+      {label:"Base + Klump/Scott",data:[2161672, 3598510, 54686, -2732307],backgroundColor:"#5E7B9B90",borderColor:"#5E7B9B",borderWidth:1}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{font:{size:10},callback:v=>"$"+(v/1e6).toFixed(1)+"M"}}}}});
+    new Chart(document.getElementById("c2"),{type:"bar",data:{labels:['2026','2027','2028','2029'],datasets:[
+      {label:"Base Case",data:[3364792, 3965029, 3710291, 1271544],backgroundColor:"#8EA3BE90",borderColor:"#8EA3BE",borderWidth:1},
+      {label:"Base + Uplifters",data:[3364792, 4383626, 6145210, 4659525],backgroundColor:"#C4581A90",borderColor:"#C4581A",borderWidth:1},
+      {label:"Base + Klump/Scott",data:[3875219, 5727760, 5532446, 2800139],backgroundColor:"#5E7B9B90",borderColor:"#5E7B9B",borderWidth:1}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{font:{size:10},callback:v=>"$"+(v/1e6).toFixed(1)+"M"}}}}});
+    const ml=['Apr 2026','Jul 2026','Oct 2026','Jan 2027','Apr 2027','Jul 2027','Oct 2027','Jan 2028','Apr 2028','Jul 2028','Oct 2028','Jan 2029'];
+    new Chart(document.getElementById("c3"),{type:"line",data:{labels:ml,datasets:[
+      {label:"Base Case",data:[2095006, 2529500, 3268157, 3374738, 3241606, 3846148, 3887658, 3886655, 4085680, 3459353, 3541493, 3420890],borderColor:"#8EA3BE",borderWidth:2,tension:0.3,pointRadius:2,fill:false},
+      {label:"Base + Uplifters",data:[2095006, 2529500, 3268157, 3399002, 3302265, 3967919, 4207190, 4553099, 5248186, 5190024, 5787170, 5936078],borderColor:"#C4581A",borderWidth:2,tension:0.3,pointRadius:2,fill:false},
+      {label:"Base + Klump/Scott",data:[2095006, 2646779, 3683795, 4089679, 4287844, 5222892, 5561756, 5865160, 6078703, 5379146, 5388058, 5194226],borderColor:"#5E7B9B",borderWidth:2,tension:0.3,pointRadius:2,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},maxRotation:45}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{font:{size:10},callback:v=>"$"+(v/1e6).toFixed(1)+"M"}}}}});
+    new Chart(document.getElementById("c4"),{type:"line",data:{labels:ml,datasets:[
+      {label:"Base Case",data:[-20528, 93889, 469464, 263223, 392409, 147972, 118408, 77981, -35781, 10116, -52501, -145870],borderColor:"#8EA3BE",borderWidth:2,tension:0.3,pointRadius:2,fill:false},
+      {label:"Base + Uplifters",data:[-20528, 93889, 469464, 275355, 404541, 180748, 200901, 210190, 146145, 180783, 119668, 11228],borderColor:"#C4581A",borderWidth:2,tension:0.3,pointRadius:2,fill:false},
+      {label:"Base + Klump/Scott",data:[-20528, 223303, 558817, 367780, 504568, 255805, 212488, 210519, -60191, -14294, -76911, -170280],borderColor:"#5E7B9B",borderWidth:2,tension:0.3,pointRadius:2,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},maxRotation:45}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{font:{size:10},callback:v=>"$"+(v/1e6).toFixed(1)+"M"}}}}});
+  }
+
+  function buildExtendedChart() {
+    new Chart(document.getElementById("c5"),{type:"bar",data:{labels:['FY2026','FY2027','FY2028','FY2029','FY2030','FY2031','FY2032','FY2033'],datasets:[
+      {label:"Base Case",data:[1.65, 2.35, 0.00, -2.44, -4.54, -6.27, -6.17, -1.52],backgroundColor:"#8EA3BE90",borderColor:"#8EA3BE",borderWidth:1},
+      {label:"Base + Uplifters + Extended BD",data:[1.65, 3.55, 6.47, 5.32, 4.44, 4.86, 4.58, 1.21],backgroundColor:"#E8A84C90",borderColor:"#E8A84C",borderWidth:1}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}},tooltip:{callbacks:{label:c=>c.dataset.label+": $"+c.parsed.y.toFixed(2)+"M"}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{font:{size:10},callback:v=>"$"+v.toFixed(1)+"M"},title:{display:true,text:"Consolidated NI ($M)",font:{size:11}}}}}});
+  }
+
+  // Event listeners
+  backBtn.addEventListener('click', () => show(current - 1));
+  nextBtn.addEventListener('click', () => show(current + 1));
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight') show(current + 1);
+    if (e.key === 'ArrowLeft') show(current - 1);
+  });
+
+  show(0);
+});
+</script>
+</body></html>

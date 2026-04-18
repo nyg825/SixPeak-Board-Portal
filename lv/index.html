@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LV Construction — Operations Portal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+:root {
+  --denim:#0B1833; --space:#2C3A51; --space-light:#384862; --space-muted:#1E2C44;
+  --steel-light:#E2E7F0; --ghost-warm:#FAFAF6;
+  --rust:#C4581A; --rust-glow:#E8935A;
+  --success:#10B981; --warning:#F59E0B; --error:#EF4444;
+  --gray:#94A3B8; --border:rgba(191,199,218,0.12);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'DM Sans','Aptos',Calibri,sans-serif;
+  background:var(--steel-light); color:var(--denim); line-height:1.6;
+  min-height:100vh;
+}
+.wrap { max-width:1200px; margin:0 auto; padding:2rem; }
+.placeholder-ribbon {
+  background:rgba(245,158,11,0.15); border-left:3px solid var(--warning);
+  padding:0.75rem 1rem; margin-bottom:1.5rem; border-radius:0 6px 6px 0;
+  font-size:0.82rem; color:var(--denim);
+}
+.placeholder-ribbon strong { color:var(--warning); }
+
+header {
+  background:linear-gradient(135deg, var(--space-light) 0%, var(--space-muted) 100%);
+  border-bottom:3px solid var(--rust);
+  padding:24px 28px; border-radius:8px 8px 0 0;
+  margin-bottom:1.5rem;
+}
+.header-top { display:flex; align-items:center; gap:20px; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid rgba(191,199,218,0.12); }
+.header-top img { height:50px; border-radius:4px; }
+.home-link {
+  margin-left:auto; color:var(--ghost-warm); opacity:0.7;
+  text-decoration:none; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.15em;
+}
+.home-link:hover { opacity:1; color:var(--rust-glow); }
+.header-row { color:var(--ghost-warm); }
+.header-row .sub { font-size:12px; text-transform:uppercase; letter-spacing:1px; opacity:0.85; }
+
+h2.sec {
+  font-size:1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.25em;
+  color:var(--rust); margin:2rem 0 0.75rem;
+}
+h2.sec::after { content:''; display:block; width:60px; height:2px; background:linear-gradient(90deg,var(--rust),transparent); margin-top:0.5rem; }
+
+.card {
+  background:var(--space-light); color:var(--ghost-warm);
+  border:1px solid rgba(191,199,218,0.15); border-radius:10px;
+  padding:1.25rem; margin:0.75rem 0;
+}
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:0.75rem 0; }
+.grid3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; margin:0.75rem 0; }
+@media(max-width:900px) { .grid2, .grid3 { grid-template-columns:1fr; } }
+
+.kpi { text-align:center; }
+.kpi .lbl { font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; opacity:0.7; }
+.kpi .val { font-size:1.6rem; font-weight:700; margin:6px 0; }
+.kpi .val.green { color:var(--success); }
+.kpi .val.amber { color:var(--warning); }
+.kpi .val.rust { color:var(--rust-glow); }
+.kpi .sub { font-size:0.78rem; opacity:0.8; }
+
+table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+th, td { padding:8px 10px; text-align:right; border-bottom:1px solid rgba(191,199,218,0.1); color:var(--ghost-warm); }
+th { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:var(--rust); }
+td:first-child, th:first-child { text-align:left; }
+.status-chip {
+  display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:600;
+}
+.status-chip.active { background:rgba(16,185,129,0.2); color:var(--success); }
+.status-chip.wrap-up { background:rgba(245,158,11,0.2); color:var(--warning); }
+.status-chip.pending { background:rgba(148,163,184,0.2); color:var(--gray); }
+
+.bonding-bar {
+  background:rgba(0,0,0,0.2); border-radius:10px; overflow:hidden;
+  height:28px; position:relative; margin:0.75rem 0;
+}
+.bonding-fill {
+  height:100%; background:linear-gradient(90deg, var(--success), var(--warning));
+  display:flex; align-items:center; padding-left:12px;
+  font-size:0.78rem; font-weight:700; color:var(--ghost-warm);
+}
+
+.footer-nav {
+  margin-top:2rem; padding:1rem 0;
+  border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; font-size:0.75rem;
+  color:var(--space); opacity:0.8;
+}
+.footer-nav a { color:var(--rust); text-decoration:none; font-weight:600; }
+</style></head><body>
+<div class="wrap">
+
+<header>
+  <div class="header-top">
+    <img src="../images/lv logo for pedro.jpg" alt="LV Construction">
+    <a class="home-link" href="../">&larr; Back to Landing</a>
+  </div>
+  <div class="header-row">
+    <div class="sub">LV Construction &mdash; Operations Portal &mdash; April 2026</div>
+  </div>
+</header>
+
+<div class="placeholder-ribbon">
+  <strong>PLACEHOLDER DATA:</strong> All figures below are illustrative. The real LV Construction tracking portal will wire live data from project management, accounting, and bonding systems.
+</div>
+
+<section>
+<h2 class="sec">Active Projects &amp; Status</h2>
+<div class="card">
+<table>
+  <thead>
+    <tr><th>Project</th><th style="text-align:right">GMP</th><th style="text-align:center">% Complete</th><th style="text-align:center">Scheduled End</th><th style="text-align:right">Status</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Crenshaw</strong></td><td>$5.3M</td><td style="text-align:center">82%</td><td style="text-align:center">Nov 2026</td><td style="text-align:right"><span class="status-chip wrap-up">Wrap-Up</span></td></tr>
+    <tr><td><strong>Ramsgate</strong></td><td>$20.0M</td><td style="text-align:center">34%</td><td style="text-align:center">Jul 2027</td><td style="text-align:right"><span class="status-chip active">On Schedule</span></td></tr>
+    <tr><td><strong>Califa</strong></td><td>$11.7M</td><td style="text-align:center">41%</td><td style="text-align:center">Jun 2027</td><td style="text-align:right"><span class="status-chip active">On Schedule</span></td></tr>
+    <tr><td><strong>Whipple</strong></td><td>$13.5M</td><td style="text-align:center">38%</td><td style="text-align:center">Jun 2027</td><td style="text-align:right"><span class="status-chip active">On Schedule</span></td></tr>
+    <tr><td><strong>Nelrose</strong></td><td>$4.1M</td><td style="text-align:center">29%</td><td style="text-align:center">Oct 2027</td><td style="text-align:right"><span class="status-chip active">On Schedule</span></td></tr>
+    <tr><td><strong>Francis</strong></td><td>$43.0M</td><td style="text-align:center">12%</td><td style="text-align:center">Dec 2028</td><td style="text-align:right"><span class="status-chip active">On Schedule</span></td></tr>
+    <tr><td><strong>Lexington</strong></td><td>$13.6M</td><td style="text-align:center">3%</td><td style="text-align:center">Apr 2028</td><td style="text-align:right"><span class="status-chip active">Starting</span></td></tr>
+    <tr><td><strong>Denny</strong></td><td>$15.8M</td><td style="text-align:center">3%</td><td style="text-align:center">Mar 2029</td><td style="text-align:right"><span class="status-chip active">Starting</span></td></tr>
+    <tr><td><strong>Acama</strong></td><td>$21.3M</td><td style="text-align:center">0%</td><td style="text-align:center">Oct 2028</td><td style="text-align:right"><span class="status-chip pending">Pre-construction</span></td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<section>
+<h2 class="sec">Bonding Capacity</h2>
+<div class="grid3">
+  <div class="card kpi">
+    <div class="lbl">Total Capacity</div>
+    <div class="val green">$150.0M</div>
+    <div class="sub">Single project: $75M</div>
+  </div>
+  <div class="card kpi">
+    <div class="lbl">Outstanding</div>
+    <div class="val amber">$89.9M</div>
+    <div class="sub">60% utilized</div>
+  </div>
+  <div class="card kpi">
+    <div class="lbl">Available</div>
+    <div class="val green">$60.1M</div>
+    <div class="sub">Ready to bid</div>
+  </div>
+</div>
+<div class="card">
+  <div style="font-size:0.8rem;margin-bottom:6px;opacity:0.85;">Utilization (60% of $150M)</div>
+  <div class="bonding-bar">
+    <div class="bonding-fill" style="width:60%">60%</div>
+  </div>
+  <div style="font-size:0.75rem;opacity:0.7;margin-top:6px;">Liquidity held against 2.5% reserve requirement: <strong style="color:var(--success)">$2.25M</strong> &middot; Surplus: <strong style="color:var(--success)">$1.12M</strong></div>
+</div>
+</section>
+
+<section>
+<h2 class="sec">Operational Metrics</h2>
+<div class="grid2">
+  <div class="card kpi">
+    <div class="lbl">Safety — OSHA Recordables (YTD)</div>
+    <div class="val green">0</div>
+    <div class="sub">Trailing 12-month TRIR: 0.00</div>
+  </div>
+  <div class="card kpi">
+    <div class="lbl">Open Change Orders</div>
+    <div class="val amber">23</div>
+    <div class="sub">Total value: $1.84M &middot; Avg age: 18 days</div>
+  </div>
+  <div class="card kpi">
+    <div class="lbl">Revenue-to-Date (FY26)</div>
+    <div class="val green">$6.4M</div>
+    <div class="sub">On plan (+2.1%)</div>
+  </div>
+  <div class="card kpi">
+    <div class="lbl">Schedule Variance (Portfolio Avg)</div>
+    <div class="val green">+2 days</div>
+    <div class="sub">2 projects behind, 7 on/ahead</div>
+  </div>
+  <div class="card kpi">
+    <div class="lbl">Subcontractor Defaults</div>
+    <div class="val green">0</div>
+    <div class="sub">Last 12 months</div>
+  </div>
+  <div class="card kpi">
+    <div class="lbl">Upcoming Closeouts (90d)</div>
+    <div class="val rust">1</div>
+    <div class="sub">Crenshaw — Nov 2026</div>
+  </div>
+</div>
+</section>
+
+<div class="footer-nav">
+  <a href="../">&larr; Back to Landing</a>
+  <span>LV Construction &middot; Operations Portal &middot; Placeholder Build</span>
+</div>
+
+</div>
+</body></html>
