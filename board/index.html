@@ -4,7 +4,6 @@
 <title>Six Peak Capital — Board Portal</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 :root {
   --denim:#0B1833; --space:#2C3A51; --steel:#BFC7DA; --ghost:#F8F9F4;
@@ -786,30 +785,30 @@ document.addEventListener("DOMContentLoaded",function(){
     new Chart(document.getElementById("c1"),{type:"bar",data:{labels:['2026','2027','2028','2029'],datasets:[
       {label:"Base Case",data:[1651245, 2346206, -4738, -2438747],backgroundColor:"#8EA3BE90",borderColor:"#8EA3BE",borderWidth:1},
       {label:"Base + Uplifters",data:[1651245, 2764803, 2011584, -1235685],backgroundColor:"#C4581A90",borderColor:"#C4581A",borderWidth:1},
-      {label:"Base + Klump/Scott",data:[2161672, 3598510, 54686, -2732307],backgroundColor:"#5E7B9B90",borderColor:"#5E7B9B",borderWidth:1}
+      {label:"Base + Klump/Scott",data:[2161672, 3598510, 54686, -2732307],backgroundColor:"#D4845A90",borderColor:"#D4845A",borderWidth:1}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{font:{size:10},callback:v=>"$"+(v/1e6).toFixed(1)+"M"}}}}});
     new Chart(document.getElementById("c2"),{type:"bar",data:{labels:['2026','2027','2028','2029'],datasets:[
       {label:"Base Case",data:[3364792, 3965029, 3710291, 1271544],backgroundColor:"#8EA3BE90",borderColor:"#8EA3BE",borderWidth:1},
       {label:"Base + Uplifters",data:[3364792, 4383626, 6145210, 4659525],backgroundColor:"#C4581A90",borderColor:"#C4581A",borderWidth:1},
-      {label:"Base + Klump/Scott",data:[3875219, 5727760, 5532446, 2800139],backgroundColor:"#5E7B9B90",borderColor:"#5E7B9B",borderWidth:1}
+      {label:"Base + Klump/Scott",data:[3875219, 5727760, 5532446, 2800139],backgroundColor:"#D4845A90",borderColor:"#D4845A",borderWidth:1}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{font:{size:10},callback:v=>"$"+(v/1e6).toFixed(1)+"M"}}}}});
     const ml=['Apr 2026','Jul 2026','Oct 2026','Jan 2027','Apr 2027','Jul 2027','Oct 2027','Jan 2028','Apr 2028','Jul 2028','Oct 2028','Jan 2029'];
     new Chart(document.getElementById("c3"),{type:"line",data:{labels:ml,datasets:[
       {label:"Base Case",data:[2095006, 2529500, 3268157, 3374738, 3241606, 3846148, 3887658, 3886655, 4085680, 3459353, 3541493, 3420890],borderColor:"#8EA3BE",borderWidth:2,tension:0.3,pointRadius:2,fill:false},
       {label:"Base + Uplifters",data:[2095006, 2529500, 3268157, 3399002, 3302265, 3967919, 4207190, 4553099, 5248186, 5190024, 5787170, 5936078],borderColor:"#C4581A",borderWidth:2,tension:0.3,pointRadius:2,fill:false},
-      {label:"Base + Klump/Scott",data:[2095006, 2646779, 3683795, 4089679, 4287844, 5222892, 5561756, 5865160, 6078703, 5379146, 5388058, 5194226],borderColor:"#5E7B9B",borderWidth:2,tension:0.3,pointRadius:2,fill:false}
+      {label:"Base + Klump/Scott",data:[2095006, 2646779, 3683795, 4089679, 4287844, 5222892, 5561756, 5865160, 6078703, 5379146, 5388058, 5194226],borderColor:"#D4845A",borderWidth:2,tension:0.3,pointRadius:2,fill:false}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},maxRotation:45}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{font:{size:10},callback:v=>"$"+(v/1e6).toFixed(1)+"M"}}}}});
     new Chart(document.getElementById("c4"),{type:"line",data:{labels:ml,datasets:[
       {label:"Base Case",data:[-20528, 93889, 469464, 263223, 392409, 147972, 118408, 77981, -35781, 10116, -52501, -145870],borderColor:"#8EA3BE",borderWidth:2,tension:0.3,pointRadius:2,fill:false},
       {label:"Base + Uplifters",data:[-20528, 93889, 469464, 275355, 404541, 180748, 200901, 210190, 146145, 180783, 119668, 11228],borderColor:"#C4581A",borderWidth:2,tension:0.3,pointRadius:2,fill:false},
-      {label:"Base + Klump/Scott",data:[-20528, 223303, 558817, 367780, 504568, 255805, 212488, 210519, -60191, -14294, -76911, -170280],borderColor:"#5E7B9B",borderWidth:2,tension:0.3,pointRadius:2,fill:false}
+      {label:"Base + Klump/Scott",data:[-20528, 223303, 558817, 367780, 504568, 255805, 212488, 210519, -60191, -14294, -76911, -170280],borderColor:"#D4845A",borderWidth:2,tension:0.3,pointRadius:2,fill:false}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},maxRotation:45}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{font:{size:10},callback:v=>"$"+(v/1e6).toFixed(1)+"M"}}}}});
   }
 
   function buildExtendedChart() {
     new Chart(document.getElementById("c5"),{type:"bar",data:{labels:['FY2026','FY2027','FY2028','FY2029','FY2030','FY2031','FY2032','FY2033'],datasets:[
       {label:"Base Case",data:[1.65, 2.35, 0.00, -2.44, -4.54, -6.27, -6.17, -1.52],backgroundColor:"#8EA3BE90",borderColor:"#8EA3BE",borderWidth:1},
-      {label:"Base + Uplifters + Extended BD",data:[1.65, 3.55, 6.47, 5.32, 4.44, 4.86, 4.58, 1.21],backgroundColor:"#E8A84C90",borderColor:"#E8A84C",borderWidth:1}
+      {label:"Base + Uplifters + Extended BD",data:[1.65, 3.55, 6.47, 5.32, 4.44, 4.86, 4.58, 1.21],backgroundColor:"#C4581ABF",borderColor:"#C4581A",borderWidth:1}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}},tooltip:{callbacks:{label:c=>c.dataset.label+": $"+c.parsed.y.toFixed(2)+"M"}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{font:{size:10},callback:v=>"$"+v.toFixed(1)+"M"},title:{display:true,text:"Consolidated NI ($M)",font:{size:11}}}}}});
   }
 
