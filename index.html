@@ -197,6 +197,14 @@ footer {
   </a>
 </div>
 
-<footer>April 2026 &middot; Confidential</footer>
+<footer><span id="current-date"></span> &middot; Confidential</footer>
+<script>
+(function(){
+  var d = new Date();
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var el = document.getElementById('current-date');
+  if (el) el.textContent = months[d.getMonth()] + ' ' + d.getFullYear();
+})();
+</script>
 </div>
 </body></html>
